@@ -367,10 +367,15 @@
     g.fillStyle = css('--text'); g.beginPath(); g.arc(X(y), Y(rate(y)), 5, 0, 7); g.fill();
     var s = supplyAt(y);
     // direct labels: the value at the dot, and the end of the line
-    g.font = '600 13px ' + css('--mono'); g.textAlign = X(y) > w * 0.6 ? 'right' : 'left';
-    g.fillText(fmt(rate(y), 2) + ' KAS/s', X(y) + (X(y) > w * 0.6 ? -10 : 10), Y(rate(y)) - 10);
+    // keep the dot label clear of the end label: lift it above when their boxes meet
+    var endTxt = fmt(rate(2040), 2) + ' in 2040', endY = Y(rate(2040)) - 8;
+    g.font = '12px ' + css('--mono'); var endL = w - 8 - g.measureText(endTxt).width;
+    g.font = '600 13px ' + css('--mono'); var right = X(y) > w * 0.6, dTxt = fmt(rate(y), 2) + ' KAS/s', dW = g.measureText(dTxt).width;
+    var dX = X(y) + (right ? -10 : 10), dR = right ? dX : dX + dW, dY = Y(rate(y)) - 10;
+    if (dR > endL - 14 && dY > endY - 16) dY = endY - 18;
+    g.textAlign = right ? 'right' : 'left'; g.fillText(dTxt, dX, dY);
     g.font = '12px ' + css('--mono'); g.fillStyle = css('--green'); g.textAlign = 'right';
-    g.fillText(fmt(rate(2040), 2) + ' in 2040', w - 8, Y(rate(2040)) - 8);
+    g.fillText(endTxt, w - 8, endY);
     drawSupply(y, s);
     $('emitOut').innerHTML = month + ': about <b>' + fmt(rate(y), 2) + ' KAS a second</b> to miners, and about <b>' + fmt(s / 1e9, 2) + ' billion</b> KAS in total. Dates are approximate; steps follow block count, not the calendar.';
   }
