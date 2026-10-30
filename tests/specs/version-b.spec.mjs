@@ -1,6 +1,6 @@
 // Version B: direct-labeled instruments.
 import { test, expect, setRange, offline } from './helpers.mjs';
-test.beforeEach(async ({ page }) => { await page.goto('/'); await page.locator('#liveSource').filter({ hasText: /Live|Simulation/ }).waitFor({ timeout: 20_000 }); });
+test.beforeEach(async ({ page }) => { await page.goto('./'); await page.locator('#liveSource').filter({ hasText: /Live|Simulation/ }).waitFor({ timeout: 20_000 }); });
 
 const ink = (page, sel) => page.locator(sel).evaluate(c => { const d = c.getContext('2d').getImageData(0, 0, c.width, c.height).data; let n = 0; for (let i = 3; i < d.length; i += 4) if (d[i]) n++; return n; });
 
@@ -37,7 +37,7 @@ test('no numbered section kickers outside Moose', async ({ page, errors }) => {
 });
 
 test('offline: the read-time line says the network was not reached', async ({ browser }) => {
-  const page = await browser.newPage(); await offline(page); await page.goto('/');
+  const page = await browser.newPage(); await offline(page); await page.goto('./');
   await expect(page.locator('#lfAt')).toHaveText('The network could not be reached from this page.', { timeout: 20_000 });
   await page.close();
 });
